@@ -1,9 +1,59 @@
-from lib.search_utils import load_movies_data, load_stopwords
-import string
-from nltk.stem import PorterStemmer
+from lib.search_utils import load_movies_data, load_stopwords, CACHE_PATH
 
+import string
+import os
+import pickle
+
+from collections import defaultdict
+from nltk.stem import PorterStemmer
 # initializing stemmer
 stemmer = PorterStemmer()
+
+class InvertedIndex:
+    def __init__(self):
+        self.index = defaultdict(set)
+        self.docmap = {}
+        self.index_path = CACHE_PATH/'index.pkl'
+        self.docmap_path = CACHE_PATH/'docmap.pkl'
+
+    def __add_document(self, doc_id, text):
+        tokens = tokenize(text)
+        for token in set(tokens):
+            self.index[token].add(doc_id)
+
+    def get_documents(self, term):
+        return sorted(list(self.index[term]))
+    
+    def build(self):
+        movies = load_movies_data()
+        for movie in movies:
+            doc_id = movie['id']
+            text = f"{movie['title']} {movie['description']}"
+            self.__add_document(doc_id,text)
+            self.docmap[doc_id] = movie
+    
+    def save(self):
+        # making dir if dosen't exists
+        os.makedirs(CACHE_PATH, exist_ok=True)
+
+        # saving indexs in index.pkl
+        with open(self.index_path,'wb') as f:
+            pickle.dump(self.index,f)
+        
+        # saving movies in docmap.pkl
+        with open(self.docmap_path,'wb') as f:
+            pickle.dump(self.docmap,f)
+
+    def load(self):
+
+        # loading indexs from index.pkl
+        with open(self.index_path,'r') as f:
+            self.index = pickle.load(f)      
+        # loading movies from docmap.pkl
+        with open(self.docmap_path,'r') as f:
+            self.docmap = pickle.load(f)
+        # return index , docmap
+
 # puncuation
 def puncuate(text):
     text = text.lower()
@@ -43,3 +93,11 @@ def search_movies(keywords,n_results = 5):
             break
 
     return results
+
+def build_index():
+    idx = InvertedIndex()
+    idx.build()
+    idx.save()
+
+    # docs = idx.get_documents('merida')
+    # print(f"First document for token 'merida' = {docs[0]}")

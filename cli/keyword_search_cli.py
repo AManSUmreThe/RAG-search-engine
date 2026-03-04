@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
-from lib.keyword_search import search_movies
+from lib.keyword_search import (
+    search_movies,
+    build_index
+)
 
 
 def main() -> None:
@@ -10,6 +13,8 @@ def main() -> None:
 
     search_parser = subparsers.add_parser("search", help="Search movies using BM25")
     search_parser.add_argument("query", type=str, help="Search query")
+
+    build_parser = subparsers.add_parser("build", help="build IDF indices")
 
     args = parser.parse_args()
 
@@ -21,6 +26,8 @@ def main() -> None:
             results = search_movies(args.query)
             for i,movie in enumerate(results):
                 print(f"{i}. {movie['title']}")
+        case "build":
+            build_index()
         case _:
             parser.print_help()
 
