@@ -1,4 +1,4 @@
-from lib.search_utils import load_movies_data
+from lib.search_utils import load_movies_data, load_stopwords
 import string
 
 # puncuation
@@ -9,8 +9,14 @@ def puncuate(text):
 
 # tokenization
 def tokenize(text):
+    # loading stopwords list
+    stopwords = load_stopwords()
     text = puncuate(text)
-    tokens = [token for token in text.split() if token]
+    tokens = []
+    for token in text.split():
+        # removing stopwords
+        if token and (token not in stopwords):
+            tokens.append(token)
     return tokens
 
 # Checking match between keyword and movie tokens
@@ -20,7 +26,7 @@ def check_match(keywords,movie_tokens):
             if keyword in movie_token:
                 return True
     return False
-
+    
 def search_movies(keywords,n_results = 5):
     movies = load_movies_data()
     results = []

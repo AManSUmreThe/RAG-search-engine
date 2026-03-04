@@ -18,7 +18,7 @@ def main() -> None:
             # print the search query here
             print(f"Searching for: {args.query}")
             
-            results = search_movies(args.query,200)
+            results = search_movies(args.query)
             for i,movie in enumerate(results):
                 print(f"{i}. {movie['title']}")
         case _:
