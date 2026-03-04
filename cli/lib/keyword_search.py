@@ -47,10 +47,10 @@ class InvertedIndex:
     def load(self):
 
         # loading indexs from index.pkl
-        with open(self.index_path,'r') as f:
+        with open(self.index_path,'rb') as f:
             self.index = pickle.load(f)      
         # loading movies from docmap.pkl
-        with open(self.docmap_path,'r') as f:
+        with open(self.docmap_path,'rb') as f:
             self.docmap = pickle.load(f)
         # return index , docmap
 
@@ -82,16 +82,31 @@ def check_match(keywords,movie_tokens):
     return False
     
 def search_movies(keywords,n_results = 5):
-    movies = load_movies_data()
-    results = []
-    keywords = tokenize(keywords)
-    for movie in movies:
-        movie_tokens = tokenize(movie['title'])
-        if check_match(keywords,movie_tokens):
-            results.append(movie)
-        if len(results) == n_results:
-            break
+    # movies = load_movies_data()
+    idx = InvertedIndex()
+    idx.load()
+    # print(idx.docmap[9])
 
+    seen,results =set(),[]
+    keywords = tokenize(keywords)
+
+    # basic searching
+    # for movie in movies:
+    #     movie_tokens = tokenize(movie['title'])
+    #     if check_match(keywords,movie_tokens):
+    #         results.append(movie)
+    #     if len(results) == n_results:
+    #         break
+
+    for keyword in keywords:
+        doc_ids = idx.get_documents(keyword)
+        for doc_id in doc_ids:
+            if doc_id in seen:
+                continue
+            seen.add(doc_id)
+            results.append(idx.docmap[doc_id])
+            if len(results) >= n_results:
+                return results
     return results
 
 def build_index():
