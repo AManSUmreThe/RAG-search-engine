@@ -9,7 +9,7 @@ def puncuate(text):
 
 # tokenization
 def tokenize(text):
-    # loading stopwords list
+    # loading stopwords list 
     stopwords = load_stopwords()
     text = puncuate(text)
     tokens = []

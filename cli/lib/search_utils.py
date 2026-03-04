@@ -16,5 +16,5 @@ def load_stopwords()-> list:
     with open(STOPWORD_PATH,'r') as file:
         stopwords = file.read()
         stopwords = stopwords.splitlines()
-        # print(stopwords)
+        # print(stopwords) 
     return stopwords
