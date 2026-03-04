@@ -1,6 +1,9 @@
 from lib.search_utils import load_movies_data, load_stopwords
 import string
+from nltk.stem import PorterStemmer
 
+# initializing stemmer
+stemmer = PorterStemmer()
 # puncuation
 def puncuate(text):
     text = text.lower()
@@ -16,6 +19,7 @@ def tokenize(text):
     for token in text.split():
         # removing stopwords
         if token and (token not in stopwords):
+            token = stemmer.stem(token)
             tokens.append(token)
     return tokens
 
