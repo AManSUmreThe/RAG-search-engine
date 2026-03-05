@@ -4,7 +4,8 @@ import argparse
 from lib.keyword_search import (
     search_movies,
     build_index,
-    search_tf
+    search_tf,
+    search_idf
 )
 
 
@@ -17,10 +18,12 @@ def main() -> None:
 
     build_parser = subparsers.add_parser("build", help="build IDF indices")
 
-    tf_parser = subparsers.add_parser("tf", help="Get token frequncy for given movie id")
+    tf_parser = subparsers.add_parser("tf", help="Get token frequency for given movie id")
     tf_parser.add_argument("doc_id", type=int, help="Movie ID")
-    tf_parser.add_argument("token", type=str, help="token")
+    tf_parser.add_argument("term", type=str, help="Search query")
 
+    idf_parser = subparsers.add_parser("idf", help="Get Inverted document frequency for given term")
+    idf_parser.add_argument("term", type=str, help="Search query")
 
     args = parser.parse_args()
 
@@ -36,6 +39,8 @@ def main() -> None:
             build_index()
         case "tf":
             print(search_tf(args.doc_id,args.token))
+        case "idf":
+            print(f"Inverse document frequency of '{args.term}': {search_idf(args.term):.2f}")
         case _:
             parser.print_help()
 

@@ -1,3 +1,5 @@
+import math
+
 from lib.search_utils import load_movies_data, load_stopwords, CACHE_PATH
 
 import string
@@ -35,6 +37,15 @@ class InvertedIndex:
             raise ValueError("More than 1 token found while searching term frequncies")
         return self.term_frequencies[doc_id][term[0]]
     
+    def get_idf(self,term):
+        term = tokenize(term)
+        if len(term) != 1:
+            raise ValueError("More than 1 token found while searching term frequncies")
+        term = term[0]
+        total_doc_count = len(self.docmap)
+        term_match_doc_count = len(self.index[term])
+
+        return math.log((total_doc_count + 1) / (term_match_doc_count + 1))
     def build(self):
         movies = load_movies_data()
         for movie in movies:
@@ -91,13 +102,13 @@ def tokenize(text):
             tokens.append(token)
     return tokens
 
-# Checking match between keyword and movie tokens
-def check_match(keywords,movie_tokens):
-    for keyword in keywords:
-        for movie_token in movie_tokens:
-            if keyword in movie_token:
-                return True
-    return False
+# # Checking match between keyword and movie tokens
+# def check_match(keywords,movie_tokens):
+#     for keyword in keywords:
+#         for movie_token in movie_tokens:
+#             if keyword in movie_token:
+#                 return True
+#     return False
     
 def search_movies(keywords,n_results = 5):
     # movies = load_movies_data()
@@ -139,3 +150,9 @@ def search_tf(doc_id,token):
     idx = InvertedIndex()
     idx.load()
     return idx.term_frequencies[doc_id][token]
+
+def search_idf(term):
+    idx = InvertedIndex()
+    idx.load()
+
+    return idx.get_idf(term)
