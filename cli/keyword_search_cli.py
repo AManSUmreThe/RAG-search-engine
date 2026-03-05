@@ -5,7 +5,9 @@ from lib.keyword_search import (
     search_movies,
     build_index,
     search_tf,
-    search_idf
+    search_idf,
+    search_tf_idf,
+    search_BM25
 )
 
 
@@ -25,6 +27,13 @@ def main() -> None:
     idf_parser = subparsers.add_parser("idf", help="Get Inverted document frequency for given term")
     idf_parser.add_argument("term", type=str, help="Search query")
 
+    tfidf_parser = subparsers.add_parser("tfidf", help="Get TF-IDF for given term")
+    tfidf_parser.add_argument("doc_id", type=int, help="Search query")
+    tfidf_parser.add_argument("term", type=str, help="Search query")
+
+    bm25_idf_parser = subparsers.add_parser("bm25idf", help="Get BM25 IDF score for a given term")
+    bm25_idf_parser.add_argument("term", type=str, help="Term to get BM25 IDF score for")
+
     args = parser.parse_args()
 
     match args.command:
@@ -38,9 +47,13 @@ def main() -> None:
         case "build":
             build_index()
         case "tf":
-            print(search_tf(args.doc_id,args.token))
+            print(search_tf(args.doc_id,args.term))
         case "idf":
             print(f"Inverse document frequency of '{args.term}': {search_idf(args.term):.2f}")
+        case "tfidf":
+            print(f"TF-IDF score of '{args.term}' in document '{args.doc_id}': {search_tf_idf(args.doc_id,args.term):.2f}")
+        case "bm25idf":
+            print(f"BM25 IDF score of '{args.term}': {search_BM25(args.term):.2f}")
         case _:
             parser.print_help()
 

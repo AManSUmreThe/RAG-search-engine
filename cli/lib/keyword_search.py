@@ -46,6 +46,23 @@ class InvertedIndex:
         term_match_doc_count = len(self.index[term])
 
         return math.log((total_doc_count + 1) / (term_match_doc_count + 1))
+    def get_tf_idf(self,doc_id,term):
+        tf = self.get_tf(doc_id,term)
+        idf = self.get_idf(term)
+
+        return tf*idf
+    def get_bm25_idf(self, term: str) -> float:
+        term = tokenize(term)
+        if len(term) != 1:
+            raise ValueError("More than 1 token found while searching term frequncies")
+        term = term[0]
+        N = len(self.docmap)
+        df = len(self.index[term])
+
+        return math.log((N - df + 0.5) / (df + 0.5) + 1)
+        
+
+    
     def build(self):
         movies = load_movies_data()
         for movie in movies:
@@ -156,3 +173,15 @@ def search_idf(term):
     idx.load()
 
     return idx.get_idf(term)
+
+def search_tf_idf(doc_id,term):
+    idx = InvertedIndex()
+    idx.load()
+
+    return idx.get_tf_idf(doc_id,term)
+
+def search_BM25(term):
+    idx = InvertedIndex()
+    idx.load()
+
+    return idx.get_bm25_idf(term)
