@@ -4,7 +4,7 @@ import string
 import os
 import pickle
 
-from collections import defaultdict
+from collections import defaultdict, Counter
 from nltk.stem import PorterStemmer
 # initializing stemmer
 stemmer = PorterStemmer()
@@ -13,16 +13,27 @@ class InvertedIndex:
     def __init__(self):
         self.index = defaultdict(set)
         self.docmap = {}
+        self.term_frequencies = defaultdict(Counter)
         self.index_path = CACHE_PATH/'index.pkl'
         self.docmap_path = CACHE_PATH/'docmap.pkl'
+        self.term_frequencies_path = CACHE_PATH/'term_frequencies.pkl'
 
     def __add_document(self, doc_id, text):
         tokens = tokenize(text)
+        self.term_frequencies[doc_id].update(tokens)
         for token in set(tokens):
             self.index[token].add(doc_id)
+        
 
     def get_documents(self, term):
         return sorted(list(self.index[term]))
+    
+    def get_tf(self,doc_id,term):
+        # tf_tokens = self.term_frequencies[doc_id]
+        term = tokenize(term)
+        if len(term) != 1:
+            raise ValueError("More than 1 token found while searching term frequncies")
+        return self.term_frequencies[doc_id][term[0]]
     
     def build(self):
         movies = load_movies_data()
@@ -31,6 +42,7 @@ class InvertedIndex:
             text = f"{movie['title']} {movie['description']}"
             self.__add_document(doc_id,text)
             self.docmap[doc_id] = movie
+            # self.term_frequencies[doc_id] += 1
     
     def save(self):
         # making dir if dosen't exists
@@ -44,6 +56,10 @@ class InvertedIndex:
         with open(self.docmap_path,'wb') as f:
             pickle.dump(self.docmap,f)
 
+        # saving term frequncies
+        with open(self.term_frequencies_path,"wb") as f:
+            pickle.dump(self.term_frequencies,f)
+
     def load(self):
 
         # loading indexs from index.pkl
@@ -52,7 +68,9 @@ class InvertedIndex:
         # loading movies from docmap.pkl
         with open(self.docmap_path,'rb') as f:
             self.docmap = pickle.load(f)
-        # return index , docmap
+        # loading term frequncies
+        with open(self.term_frequencies_path,'rb') as f:
+            self.term_frequencies = pickle.load(f)
 
 # puncuation
 def puncuate(text):
@@ -116,3 +134,8 @@ def build_index():
 
     # docs = idx.get_documents('merida')
     # print(f"First document for token 'merida' = {docs[0]}")
+
+def search_tf(doc_id,token):
+    idx = InvertedIndex()
+    idx.load()
+    return idx.term_frequencies[doc_id][token]

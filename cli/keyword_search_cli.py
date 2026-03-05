@@ -3,7 +3,8 @@
 import argparse
 from lib.keyword_search import (
     search_movies,
-    build_index
+    build_index,
+    search_tf
 )
 
 
@@ -15,6 +16,11 @@ def main() -> None:
     search_parser.add_argument("query", type=str, help="Search query")
 
     build_parser = subparsers.add_parser("build", help="build IDF indices")
+
+    tf_parser = subparsers.add_parser("tf", help="Get token frequncy for given movie id")
+    tf_parser.add_argument("doc_id", type=int, help="Movie ID")
+    tf_parser.add_argument("token", type=str, help="token")
+
 
     args = parser.parse_args()
 
@@ -28,6 +34,8 @@ def main() -> None:
                 print(f"{i}. {movie['title']}")
         case "build":
             build_index()
+        case "tf":
+            print(search_tf(args.doc_id,args.token))
         case _:
             parser.print_help()
 
