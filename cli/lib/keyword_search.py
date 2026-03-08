@@ -1,6 +1,12 @@
 import math
 
-from lib.search_utils import load_movies_data, load_stopwords, CACHE_PATH
+from lib.search_utils import(
+    load_movies_data,
+    load_stopwords,
+    CACHE_PATH,
+    BM25_B,
+    BM25_K1
+)
 
 import string
 import os
@@ -13,16 +19,21 @@ stemmer = PorterStemmer()
 
 class InvertedIndex:
     def __init__(self):
+        # class attributes
         self.index = defaultdict(set)
         self.docmap = {}
         self.term_frequencies = defaultdict(Counter)
+        self.doc_lengths = defaultdict()
+        # save file paths
         self.index_path = CACHE_PATH/'index.pkl'
         self.docmap_path = CACHE_PATH/'docmap.pkl'
         self.term_frequencies_path = CACHE_PATH/'term_frequencies.pkl'
+        self.doc_lengths_path = CACHE_PATH/"doc_lengths.pkl"
 
     def __add_document(self, doc_id, text):
         tokens = tokenize(text)
         self.term_frequencies[doc_id].update(tokens)
+        self.doc_lengths[doc_id] = len(tokens)
         for token in set(tokens):
             self.index[token].add(doc_id)
         
@@ -60,9 +71,34 @@ class InvertedIndex:
         df = len(self.index[term])
 
         return math.log((N - df + 0.5) / (df + 0.5) + 1)
-        
-
     
+    def get_bm25_tf(self,doc_id,term: str,k1=BM25_K1,b=BM25_B):
+        tf = self.get_tf(doc_id,term)
+        doc_length = self.doc_lengths[doc_id]
+        avg_doc_length = self.__get_avg_doc_length()
+
+        # Length normalization factor
+        length_norm = 1 - b + b * (doc_length / avg_doc_length)
+
+        # Apply to term frequency
+        tf_component = (tf * (k1 + 1)) / (tf + k1 * length_norm)
+
+        return tf_component
+    def bm25(self,doc_id,term: str,k1=BM25_K1,b=BM25_B):
+        bm25_tf = self.get_bm25_tf(doc_id,term,k1,b)
+        bm25_idf = self.get_bm25_idf(term)
+        return bm25_tf*bm25_idf
+    
+    def __get_avg_doc_length(self) -> float:
+        # sum of all doc lengths
+        total_sum = sum(list(self.doc_lengths.values()))
+        # total no. of documents
+        total_docs = len(self.doc_lengths)
+        if total_docs == 0:
+            return 0
+
+        return total_sum/total_docs
+
     def build(self):
         movies = load_movies_data()
         for movie in movies:
@@ -75,21 +111,20 @@ class InvertedIndex:
     def save(self):
         # making dir if dosen't exists
         os.makedirs(CACHE_PATH, exist_ok=True)
-
         # saving indexs in index.pkl
         with open(self.index_path,'wb') as f:
-            pickle.dump(self.index,f)
-        
+            pickle.dump(self.index,f)  
         # saving movies in docmap.pkl
         with open(self.docmap_path,'wb') as f:
             pickle.dump(self.docmap,f)
-
         # saving term frequncies
         with open(self.term_frequencies_path,"wb") as f:
             pickle.dump(self.term_frequencies,f)
+        # saving document lengths
+        with open(self.doc_lengths_path,'wb') as f:
+            pickle.dump(self.doc_lengths,f)
 
     def load(self):
-
         # loading indexs from index.pkl
         with open(self.index_path,'rb') as f:
             self.index = pickle.load(f)      
@@ -99,6 +134,9 @@ class InvertedIndex:
         # loading term frequncies
         with open(self.term_frequencies_path,'rb') as f:
             self.term_frequencies = pickle.load(f)
+        #loading document lengths
+        with open(self.doc_lengths_path,'rb') as f:
+            self.doc_lengths = pickle.load(f)
 
 # puncuation
 def puncuate(text):
@@ -180,8 +218,14 @@ def search_tf_idf(doc_id,term):
 
     return idx.get_tf_idf(doc_id,term)
 
-def search_BM25(term):
+def search_BM25_idf(term):
     idx = InvertedIndex()
     idx.load()
 
     return idx.get_bm25_idf(term)
+
+def search_BM25_tf(doc_id,term,k1,b):
+    idx = InvertedIndex()
+    idx.load()
+
+    return idx.get_bm25_tf(doc_id,term,k1,b)

@@ -6,6 +6,9 @@ DATA_PATH = ROOT/'data'/'movies.json'
 STOPWORD_PATH = ROOT/'data'/'stopwords.txt'
 CACHE_PATH = ROOT/'cache'
 
+# constants
+BM25_B = 0.75
+BM25_K1 = 1.5
 
 def load_movies_data() -> list[dict]:
     # loading json
