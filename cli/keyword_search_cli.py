@@ -3,6 +3,7 @@
 import argparse
 from lib.keyword_search import (
     search_movies,
+    bm25_search,
     build_index,
     search_tf,
     search_idf,
@@ -22,6 +23,9 @@ def main() -> None:
 
     search_parser = subparsers.add_parser("search", help="Search movies using BM25")
     search_parser.add_argument("query", type=str, help="Search query")
+
+    bm25search_parser = subparsers.add_parser("bm25search", help="Search movies using full BM25 scoring")
+    bm25search_parser.add_argument("query", type=str, help="Search query")
 
     build_parser = subparsers.add_parser("build", help="build IDF indices")
 
@@ -55,7 +59,12 @@ def main() -> None:
             
             results = search_movies(args.query)
             for i,movie in enumerate(results):
-                print(f"{i}. {movie['title']}")
+                print(f"{i+1}. {movie['title']}")
+        
+        case "bm25search":
+            search_res = bm25_search(args.query)
+            for i, res in enumerate(search_res):
+                print(f"{i+1}. ({res['doc_id']}) {res['title']} - Score: {res["score"]:.2f}")
         case "build":
             build_index()
         case "tf":
