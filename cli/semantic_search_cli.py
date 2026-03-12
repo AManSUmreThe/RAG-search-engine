@@ -19,15 +19,15 @@ def main():
     # verify_embeddings_parser.add_argument("query", type=str, help="Search query")
 
 
-    embed_text_parser = subparsers.add_parser('embed_text',help='Get Embeddings of given query')
+    embed_text_parser = subparsers.add_parser('embed_text',help='Get Embeddings of given text')
     embed_text_parser.add_argument("query", type=str, help="Search query")
 
     embed_query_parser = subparsers.add_parser('embedquery',help='Get Embeddings of given query')
     embed_query_parser.add_argument("query", type=str, help="Search query")
 
-    search_parser = subparsers.add_parser('search',help='Get Embeddings of given query')
+    search_parser = subparsers.add_parser('search',help='Search the documents for query')
     search_parser.add_argument("query", type=str, help="Search query")
-    search_parser.add_argument("--limit", type=int,default=5, help="Search query")
+    search_parser.add_argument("--limit", type=int,default=5, help="Search result limit")
 
 
     args = parser.parse_args()

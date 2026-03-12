@@ -108,5 +108,5 @@ def search(query,limit=5):
     search_res = semamtic.search(query,limit)
 
     for idx,res in enumerate(search_res,start=1):
-        print(f"{idx}. {res['title']} (score: {res['score']:.2f})")
+        print(f"{idx}. {res['title']} (score: {res['score']:.4f})")
         print(res['description'][:100])
