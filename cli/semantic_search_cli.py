@@ -3,7 +3,9 @@
 from lib.semantic_search import (
     verify_model,
     embed_text,
-    verify_embeddings
+    verify_embeddings,
+    embed_query_text,
+    search
     )
 import argparse
 
@@ -20,9 +22,20 @@ def main():
     embed_text_parser = subparsers.add_parser('embed_text',help='Get Embeddings of given query')
     embed_text_parser.add_argument("query", type=str, help="Search query")
 
+    embed_query_parser = subparsers.add_parser('embedquery',help='Get Embeddings of given query')
+    embed_query_parser.add_argument("query", type=str, help="Search query")
+
+    search_parser = subparsers.add_parser('search',help='Get Embeddings of given query')
+    search_parser.add_argument("query", type=str, help="Search query")
+    search_parser.add_argument("--limit", type=int,default=5, help="Search query")
+
+
     args = parser.parse_args()
 
     match args.command:
+        case "search":
+            search(args.query,args.limit)
+
         case "verify":
             model = verify_model()
             print(f"Model loaded: {model}") 
@@ -36,6 +49,10 @@ def main():
             print(f"Text: {args.query}")
             print(f"First 3 dimensions: {embedding[:3]}")
             print(f"Dimensions: {embedding.shape[0]}")
+
+        case 'embedquery':
+            embed_query_text(args.query)
+
         case _:
             parser.print_help()
 
