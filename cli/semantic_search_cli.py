@@ -6,6 +6,8 @@ from lib.semantic_search import (
     verify_embeddings,
     embed_query_text,
     chunk_query,
+    semantic_chunk_query,
+    build_embed_chunks,
     search
     )
 import argparse
@@ -19,6 +21,8 @@ def main():
     verify_embeddings_parser = subparsers.add_parser('verify_embeddings',help='Get Embeddings of given query')
     # verify_embeddings_parser.add_argument("query", type=str, help="Search query")
 
+    embed_chunks_parser = subparsers.add_parser('embed_chunks', help="build chunk embeddings and metadata")
+
 
     embed_text_parser = subparsers.add_parser('embed_text',help='Get Embeddings of given text')
     embed_text_parser.add_argument("query", type=str, help="Search query")
@@ -28,8 +32,13 @@ def main():
 
     chunk_parser = subparsers.add_parser('chunk',help='Get Embeddings of given query')
     chunk_parser.add_argument("query", type=str, help="Search query")
-    chunk_parser.add_argument("--chunk_size", type=int, default=200, help="Define Chunk size")
+    chunk_parser.add_argument("--chunk-size", type=int, default=200, help="Define Chunk size")
     chunk_parser.add_argument("--overlap", type=int, default=0, help="chunk overlaping size")
+
+    semantic_chunk_parser = subparsers.add_parser('semantic_chunk',help='Get Embeddings of given query')
+    semantic_chunk_parser.add_argument("query", type=str, help="Search query")
+    semantic_chunk_parser.add_argument("--max-chunk-size", type=int, default=4, help="Define Chunk size")
+    semantic_chunk_parser.add_argument("--overlap", type=int, default=0, help="chunk overlaping size")
 
     search_parser = subparsers.add_parser('search',help='Search the documents for query')
     search_parser.add_argument("query", type=str, help="Search query")
@@ -43,8 +52,14 @@ def main():
         case "search":
             search(args.query,args.limit)
 
+        case "embed_chunks":
+            build_embed_chunks()
+
         case "chunk":
             chunk_query(args.query, args.chunk_size, args.overlap)
+        
+        case "semantic_chunk":
+            semantic_chunk_query(args.query, args.max_chunk_size, args.overlap)
         case "verify":
             model = verify_model()
             print(f"Model loaded: {model}") 
