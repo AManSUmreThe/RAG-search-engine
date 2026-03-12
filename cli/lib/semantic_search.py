@@ -101,6 +101,23 @@ def embed_query_text(query):
     print(f"First 5 dimensions: {embedding[:5]}")
     print(f"Shape: {embedding.shape}")
 
+def chunk_query(query,chunk_size,overlap):
+    words = query.split()
+    chunks = []
+
+    step_size = chunk_size - overlap
+    # print(step_size)
+    for i in range(0,len(words),step_size):
+        chunk_words = words[i:i+chunk_size]
+        if len(chunk_words) <= overlap:
+            break
+        chunks.append(" ".join(chunk_words))
+        # print(chunks)
+    print(f"Chunking {len(query)} characters")
+    for idx,chunk in enumerate(chunks,start=1):
+        print(f"{idx}. {chunk}")
+
+
 def search(query,limit=5):
     semamtic = SemanticSearch()
     document = load_movies_data()

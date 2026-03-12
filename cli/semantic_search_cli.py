@@ -5,6 +5,7 @@ from lib.semantic_search import (
     embed_text,
     verify_embeddings,
     embed_query_text,
+    chunk_query,
     search
     )
 import argparse
@@ -25,9 +26,15 @@ def main():
     embed_query_parser = subparsers.add_parser('embedquery',help='Get Embeddings of given query')
     embed_query_parser.add_argument("query", type=str, help="Search query")
 
+    chunk_parser = subparsers.add_parser('chunk',help='Get Embeddings of given query')
+    chunk_parser.add_argument("query", type=str, help="Search query")
+    chunk_parser.add_argument("--chunk_size", type=int, default=200, help="Define Chunk size")
+    chunk_parser.add_argument("--overlap", type=int, default=0, help="chunk overlaping size")
+
     search_parser = subparsers.add_parser('search',help='Search the documents for query')
     search_parser.add_argument("query", type=str, help="Search query")
     search_parser.add_argument("--limit", type=int,default=5, help="Search result limit")
+
 
 
     args = parser.parse_args()
@@ -36,6 +43,8 @@ def main():
         case "search":
             search(args.query,args.limit)
 
+        case "chunk":
+            chunk_query(args.query, args.chunk_size, args.overlap)
         case "verify":
             model = verify_model()
             print(f"Model loaded: {model}") 
