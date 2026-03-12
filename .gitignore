@@ -10,9 +10,9 @@ wheels/
 .venv
 
 #cache
-*.npy
-*.json
-*.pkl
+cache/*.npy
+cache/*.json
+cache/*.pkl
 
 #dataset
 /data/
