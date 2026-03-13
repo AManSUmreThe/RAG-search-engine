@@ -41,7 +41,7 @@ def main():
     semantic_chunk_parser.add_argument("--max-chunk-size", type=int, default=4, help="Define Chunk size")
     semantic_chunk_parser.add_argument("--overlap", type=int, default=0, help="chunk overlaping size")
 
-    chunked_search_parser = subparsers.add_parser('search_chunks',help='Search the documents for query')
+    chunked_search_parser = subparsers.add_parser('search_chunked',help='Search the documents for query')
     chunked_search_parser.add_argument("query", type=str, help="Search query")
     chunked_search_parser.add_argument("--limit", type=int,default=5, help="Search result limit")
     
@@ -57,7 +57,7 @@ def main():
         case "search":
             search(args.query,args.limit)
 
-        case "search_chunks":
+        case "search_chunked":
             chunked_search(args.query,args.limit)
 
         case "embed_chunks":

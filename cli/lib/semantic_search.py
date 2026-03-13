@@ -208,7 +208,7 @@ def chunk_query(query,chunk_size,overlap):
         print(f"{idx}. {chunk}")
 
 def semantic_chunk_query(query,max_chunk_size,overlap):
-    sentences = re.split(r"(?<=[.!?])\s+",query)
+    sentences = re.split(r"(?<=[.!?])\s+",query.strip())
     chunks = []
     step_size = max_chunk_size - overlap
 

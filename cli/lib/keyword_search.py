@@ -39,34 +39,34 @@ class InvertedIndex:
             return 0
 
         return total_sum/total_docs
-    # def bm25_search(self, query, limit):
-    #     tokens = tokenize(query)
-    #     # BM25 scores
-    #     scores = {}
+    def bm25_search(self, query, limit=5):
+        tokens = tokenize(query)
+        # BM25 scores
+        scores = {}
 
-    #     # adding scores to doc id based on query token
-    #     for doc_id in self.docmap:
-    #         score = 0
-    #         for token in tokens:
-    #             score += self.bm25(doc_id,token)
-    #         scores[doc_id] = score
+        # adding scores to doc id based on query token
+        for doc_id in self.docmap:
+            score = 0
+            for token in tokens:
+                score += self.bm25(doc_id,token)
+            scores[doc_id] = score
         
-    #     # sorting the docs based on their bm25 scores 
-    #     sorted_docs = sorted(scores.items(),key= lambda x:x[1], reverse=True)
+        # sorting the docs based on their bm25 scores 
+        sorted_docs = sorted(scores.items(),key= lambda x:x[1], reverse=True)
 
-    #     results = []
+        results = []
 
-    #     for doc_id,score in sorted_docs[:limit]:
-    #         title = self.docmap[doc_id]['title']
-    #         results.append(
-    #             {
-    #                 "doc_id": doc_id,
-    #                 "title": title,
-    #                 "score": score
-    #             }
-    #         )
+        for doc_id,score in sorted_docs[:limit]:
+            title = self.docmap[doc_id]['title']
+            results.append(
+                {
+                    "doc_id": doc_id,
+                    "title": title,
+                    "score": score
+                }
+            )
         
-    #     return results
+        return results
 
 
     def get_tf(self,doc_id,term):
