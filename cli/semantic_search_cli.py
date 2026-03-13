@@ -8,6 +8,7 @@ from lib.semantic_search import (
     chunk_query,
     semantic_chunk_query,
     build_embed_chunks,
+    chunked_search,
     search
     )
 import argparse
@@ -40,6 +41,10 @@ def main():
     semantic_chunk_parser.add_argument("--max-chunk-size", type=int, default=4, help="Define Chunk size")
     semantic_chunk_parser.add_argument("--overlap", type=int, default=0, help="chunk overlaping size")
 
+    chunked_search_parser = subparsers.add_parser('search_chunks',help='Search the documents for query')
+    chunked_search_parser.add_argument("query", type=str, help="Search query")
+    chunked_search_parser.add_argument("--limit", type=int,default=5, help="Search result limit")
+    
     search_parser = subparsers.add_parser('search',help='Search the documents for query')
     search_parser.add_argument("query", type=str, help="Search query")
     search_parser.add_argument("--limit", type=int,default=5, help="Search result limit")
@@ -52,11 +57,17 @@ def main():
         case "search":
             search(args.query,args.limit)
 
+        case "search_chunks":
+            chunked_search(args.query,args.limit)
+
         case "embed_chunks":
             build_embed_chunks()
 
         case "chunk":
-            chunk_query(args.query, args.chunk_size, args.overlap)
+            chunks = chunk_query(args.query, args.chunk_size, args.overlap)
+            print(f"Semantic chunking {len(args.query)} characters")
+            for idx,chunk in enumerate(chunks, start=1):
+                print(f"{idx}. {chunk}")
         
         case "semantic_chunk":
             semantic_chunk_query(args.query, args.max_chunk_size, args.overlap)
