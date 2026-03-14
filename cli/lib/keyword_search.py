@@ -57,11 +57,12 @@ class InvertedIndex:
         results = []
 
         for doc_id,score in sorted_docs[:limit]:
-            title = self.docmap[doc_id]['title']
+            doc= self.docmap[doc_id]
             results.append(
                 {
-                    "doc_id": doc_id,
-                    "title": title,
+                    "id": doc_id,
+                    "title": doc['title'],
+                    'document':doc['description'][:100],
                     "score": score
                 }
             )
@@ -209,27 +210,28 @@ def build_index():
 def bm25_search(query,limit=5):
     idx = InvertedIndex()
     idx.load()
-    tokens = tokenize(query)
-    # BM25 scores
-    scores = {}
-    # adding scores to doc id based on query token
-    for doc_id in idx.docmap:
-        score = 0
-        for token in tokens:
-            score += idx.bm25(doc_id,token)
-            scores[doc_id] = score    
-    # sorting the docs based on their bm25 scores 
-    sorted_docs = sorted(scores.items(),key= lambda x:x[1], reverse=True)
-    results = []
-    for doc_id,score in sorted_docs[:limit]:
-        title = idx.docmap[doc_id]['title']
-        results.append(
-            {
-                "doc_id": doc_id,
-                "title": title,
-                "score": score
-            }
-        )
+    # tokens = tokenize(query)
+    # # BM25 scores
+    # scores = {}
+    # # adding scores to doc id based on query token
+    # for doc_id in idx.docmap:
+    #     score = 0
+    #     for token in tokens:
+    #         score += idx.bm25(doc_id,token)
+    #         scores[doc_id] = score    
+    # # sorting the docs based on their bm25 scores 
+    # sorted_docs = sorted(scores.items(),key= lambda x:x[1], reverse=True)
+    # results = []
+    # for doc_id,score in sorted_docs[:limit]:
+    #     title = idx.docmap[doc_id]['title']
+    #     results.append(
+    #         {
+    #             "doc_id": doc_id,
+    #             "title": title,
+    #             "score": score
+    #         }
+    #     )
+    results = idx.bm25_search(query,limit)
     return results
 
 def search_movies(keywords,n_results = 5):

@@ -93,6 +93,9 @@ class ChunkedSemanticSearch(SemanticSearch):
         self.chunk_metadata_path = CACHE_PATH/"chunk_metadata.json"
 
     def search_chunks(self, query: str, limit: int = 10):
+        query = query.strip()
+        if not query:
+            return []
         query_embed = self.generate_embedding(query)
         chunk_scores = []
         document_scores = defaultdict(lambda:0)
@@ -208,7 +211,10 @@ def chunk_query(query,chunk_size,overlap):
         print(f"{idx}. {chunk}")
 
 def semantic_chunk_query(query,max_chunk_size,overlap):
-    sentences = re.split(r"(?<=[.!?])\s+",query.strip())
+    query = query.strip()
+    if not query:
+        return []
+    sentences = re.split(r"(?<=[.!?])\s+",query)
     chunks = []
     step_size = max_chunk_size - overlap
 

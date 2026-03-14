@@ -64,7 +64,7 @@ def main() -> None:
         case "bm25search":
             search_res = bm25_search(args.query)
             for i, res in enumerate(search_res):
-                print(f"{i+1}. ({res['doc_id']}) {res['title']} - Score: {res["score"]:.2f}")
+                print(f"{i+1}. ({res['id']}) {res['title']} - Score: {res["score"]:.2f}")
         case "build":
             build_index()
         case "tf":
