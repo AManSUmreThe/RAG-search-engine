@@ -10,9 +10,9 @@ Consider:
 - Content appropriateness
 
 Rate 0-10 (10 = perfect match).
-- 10 => perfect match
-- 0 => not relevant 
+- 10 = perfect match
+- 0 = not relevant 
 
-Output ONLY the number in your response, no other text or explanation. ALL movies MUST be rated even if they are not relevant. 
+Output ONLY the number in your response, no other text or explanation. ALL movies MUST be rated. 
 
 Score:

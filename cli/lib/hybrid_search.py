@@ -33,7 +33,7 @@ class HybridSearch:
     def hybrid_score(self,bm25_score, semantic_score, alpha=0.5):
         return alpha * bm25_score + (1 - alpha) * semantic_score
     
-    def rrf_score(self,rank, k):
+    def rrf_score(self,rank, k=60):
         return 1 / (k + rank)
     
     def normalize_results(self,results):
