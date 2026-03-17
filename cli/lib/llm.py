@@ -19,17 +19,31 @@ def generate_response(content,model_name="gemma-3-27b-it"):
     # ### ignore if works correctly
     return response.text
 
-def correct_spelling(query):
+# def correct_spelling(query):
     
-    with open(PROMPTS_PATH/'spellings.md','r') as f:
-        prompt = f.read()
-    prompt = prompt.format(query=query)
-    # print(prompt)
-    return generate_response(prompt)
+#     with open(PROMPTS_PATH/'spellings.md','r') as f:
+#         prompt = f.read()
+#     prompt = prompt.format(query=query)
+#     # print(prompt)
+#     return generate_response(prompt)
     
-def rewrite_query(query):
+# def rewrite_query(query):
 
-    with open(PROMPTS_PATH/'rewrite.md','r') as f:
+#     with open(PROMPTS_PATH/'rewrite.md','r') as f:
+#         prompt = f.read()
+#     prompt = prompt.format(query=query)
+#     # print(prompt)
+#     return generate_response(prompt)
+
+# def expand_query(query):
+#     with open(PROMPTS_PATH/'expansion.md','r') as f:
+#         prompt = f.read()
+#     prompt = prompt.format(query=query)
+#     # print(prompt)
+#     return generate_response(prompt)
+
+def augment_query(query,type):
+    with open(PROMPTS_PATH/f'{type}.md','r') as f:
         prompt = f.read()
     prompt = prompt.format(query=query)
     # print(prompt)
