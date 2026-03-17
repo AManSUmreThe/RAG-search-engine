@@ -4,7 +4,7 @@ import os
 from lib.keyword_search import InvertedIndex
 from lib.semantic_search import ChunkedSemanticSearch
 from lib.search_utils import load_movies_data
-
+from lib.llm import correct_spelling
 
 class HybridSearch:
     def __init__(self, documents):
@@ -134,9 +134,16 @@ def weighted_search(query, alpha, limit=5):
     results = hybrid.weighted_search(query,alpha,limit)
 
     return results
-def rrf_search(query, k, limit=5):
+
+# rrf search command function
+def rrf_search(query, k, enhances, limit=5):
     documents = load_movies_data()
     hybrid = HybridSearch(documents)
+    match enhances:
+        case 'spell':
+            enhanced_query = correct_spelling(query)
+            print(f"Enhanced query (spell): '{query}' -> '{enhanced_query}'\n")
+            query = enhanced_query
 
     results = hybrid.rrf_search(query,k,limit)
 

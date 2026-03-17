@@ -23,12 +23,18 @@ def main() -> None:
     rrf_search_parser.add_argument('--k', type=int, default=60 ,help='K hyperparameter of rrf score')
     rrf_search_parser.add_argument('--limit', type=int, default=10, help='Maximun number of results')
 
+    rrf_search_parser.add_argument("--enhance",
+                            type=str,
+                            choices=["spell"],
+                            help="Query enhancement method",
+                            )
+
 
     args = parser.parse_args()
 
     match args.command:
         case 'rrf_search':
-            results = rrf_search(args.query,args.k,args.limit)
+            results = rrf_search(args.query,args.k,args.enhance,args.limit)
             for idx,res in enumerate(results,start=1):
                 print(f"{idx}. {res['title']}")
                 print(f"RRF Score: {res['rrf_score']:.3f}")
