@@ -16,3 +16,6 @@ cache/*.pkl
 
 #dataset
 /data/
+
+#api keys and enviornment variables
+.env
