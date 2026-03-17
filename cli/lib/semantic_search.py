@@ -121,7 +121,7 @@ class ChunkedSemanticSearch(SemanticSearch):
             results.append({
                 'id': midx,
                 'title': doc['title'],
-                'document': doc['description'][:100],
+                'document': doc['description'],
                 'score': round(score,4),
                 'metadata': {}
             })
@@ -238,7 +238,7 @@ def chunked_search(query,limit):
 
     for idx,res in enumerate(results,start=1):
         print(f"\n{idx}. {res['title']} (score: {res['score']:.4f})")
-        print(f"   {res['document']}...")
+        print(f"   {res['document'][:100]}...")
 
 def search(query,limit=5):
     semamtic = SemanticSearch()

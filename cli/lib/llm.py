@@ -1,4 +1,5 @@
 import os
+import time
 from dotenv import load_dotenv
 
 from google import genai
@@ -48,3 +49,16 @@ def augment_query(query,type):
     prompt = prompt.format(query=query)
     # print(prompt)
     return generate_response(prompt)
+
+def rerank_results(documents,query,type):
+    with open(PROMPTS_PATH/f'{type}.md','r') as f:
+        prompt = f.read()
+    for doc in documents:
+        print(doc)
+        # doc['rerank'] = generate_response(prompt.format(
+        #     query = query,
+        #     title = doc['title'],
+        #     document = doc['description']
+        # ))
+    # time.sleep(10)
+        

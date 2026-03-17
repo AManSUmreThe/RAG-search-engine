@@ -62,7 +62,7 @@ class InvertedIndex:
                 {
                     "id": doc_id,
                     "title": doc['title'],
-                    'document':doc['description'][:100],
+                    'document':doc['description'],
                     "score": score
                 }
             )

@@ -4,7 +4,7 @@ import os
 from lib.keyword_search import InvertedIndex
 from lib.semantic_search import ChunkedSemanticSearch
 from lib.search_utils import load_movies_data
-from lib.llm import augment_query
+from lib.llm import augment_query, rerank_results
 
 class HybridSearch:
     def __init__(self, documents):
@@ -136,7 +136,7 @@ def weighted_search(query, alpha, limit=5):
     return results
 
 # rrf search command function
-def rrf_search(query, k, enhances, limit=5):
+def rrf_search(query, k, limit=5,enhances=None,rerank=None):
 
     documents = load_movies_data()
     hybrid = HybridSearch(documents)
@@ -145,9 +145,13 @@ def rrf_search(query, k, enhances, limit=5):
         enhanced_query = augment_query(query,enhances)
         print(f"Enhanced query ({enhances}): '{query}' -> '{enhanced_query}'\n")
         query = enhanced_query
+    # if rerank:
+    #     limit = 5*limit
 
     results = hybrid.rrf_search(query,k,limit)
 
+    if rerank:
+        results = rerank_results(results,query,rerank)
     return results
 
 def normalize(scores):

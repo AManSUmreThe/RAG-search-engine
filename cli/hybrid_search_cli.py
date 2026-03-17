@@ -28,13 +28,18 @@ def main() -> None:
                             choices=["spell","rewrite","expand"],
                             help="Query enhancement method",
                             )
+    rrf_search_parser.add_argument("--rerank-method",
+                                   type=str,
+                                   choices=["individual"],
+                                   help="Re ranking results with llm"
+                                   )
 
 
     args = parser.parse_args()
 
     match args.command:
         case 'rrf_search':
-            results = rrf_search(args.query,args.k,args.enhance,args.limit)
+            results = rrf_search(args.query,args.k,args.limit,args.enhance,args.rerank_method)
             for idx,res in enumerate(results,start=1):
                 print(f"{idx}. {res['title']}")
                 print(f"RRF Score: {res['rrf_score']:.3f}")
