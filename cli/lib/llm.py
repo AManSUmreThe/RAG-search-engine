@@ -1,5 +1,7 @@
 import os
 import time
+from collections import defaultdict
+
 from dotenv import load_dotenv
 
 from google import genai
@@ -53,12 +55,22 @@ def augment_query(query,type):
 def rerank_results(documents,query,type):
     with open(PROMPTS_PATH/f'{type}.md','r') as f:
         prompt = f.read()
+    results = []
     for doc in documents:
-        print(doc)
-        # doc['rerank'] = generate_response(prompt.format(
-        #     query = query,
-        #     title = doc['title'],
-        #     document = doc['description']
-        # ))
-    # time.sleep(10)
+
+        rank = generate_response(prompt.format(
+            query = query,
+            title = doc['title'],
+            document = doc['document']
+        ))
+
+        try:
+            rank = int(rank)
+        except:
+            print(f"LLM Falied to Rank the movie {doc['title']} with {rank}")
+            rank = 0
+        results.append({**doc,'rerank': rank})
+        print(rank,doc['title'])
+        time.sleep(15)
+    return sorted(results,key = lambda x:x['rerank'], reverse=True)
         

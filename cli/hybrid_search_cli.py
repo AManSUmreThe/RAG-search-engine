@@ -44,7 +44,7 @@ def main() -> None:
                 print(f"{idx}. {res['title']}")
                 print(f"RRF Score: {res['rrf_score']:.3f}")
                 print(f"BM25 Rank: {res['bm25_rank']}, Semantic Rank: {res['semantic_rank']}")
-                print(res['document'])
+                print(res['document'][:100])
         case 'weighted_search':
             results = weighted_search(args.query,args.alpha,args.limit)
             for idx,res in enumerate(results,start=1):

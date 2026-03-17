@@ -145,14 +145,15 @@ def rrf_search(query, k, limit=5,enhances=None,rerank=None):
         enhanced_query = augment_query(query,enhances)
         print(f"Enhanced query ({enhances}): '{query}' -> '{enhanced_query}'\n")
         query = enhanced_query
-    # if rerank:
-    #     limit = 5*limit
+    if rerank:
+        limit = 5*limit
 
     results = hybrid.rrf_search(query,k,limit)
 
     if rerank:
         results = rerank_results(results,query,rerank)
-    return results
+
+    return results[:int(limit/5)]
 
 def normalize(scores):
     if not scores or len(scores) == 0 :
