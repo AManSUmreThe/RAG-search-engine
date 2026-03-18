@@ -1,11 +1,17 @@
 import json
+import os
+from dotenv import load_dotenv
 from pathlib import Path
+
+load_dotenv()
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_PATH = ROOT/'data'/'movies.json'
 STOPWORD_PATH = ROOT/'data'/'stopwords.txt'
 CACHE_PATH = ROOT/'cache'
 PROMPTS_PATH = ROOT/'prompts'
+
+HF_TOKEN = os.environ.get("HF_TOKEN")
 # constants
 BM25_B = 0.75
 BM25_K1 = 1.5

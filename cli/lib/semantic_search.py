@@ -3,10 +3,11 @@ from collections import defaultdict
 import numpy as np
 import re
 import json
-# from collections import defaultdict
 
+#loading 
 from sentence_transformers import SentenceTransformer
 from lib.search_utils import (
+    HF_TOKEN,
     CACHE_PATH,
     load_movies_data
 )
@@ -24,7 +25,7 @@ def cosine_similarity(vec1, vec2):
 
 class SemanticSearch:
     def __init__(self):
-        self.model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        self.model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2',token=HF_TOKEN)
         self.embeddings = None
         self.documents = None
         self.docmap = {}
