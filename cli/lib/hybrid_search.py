@@ -4,7 +4,11 @@ import os
 from lib.keyword_search import InvertedIndex
 from lib.semantic_search import ChunkedSemanticSearch
 from lib.search_utils import load_movies_data
-from lib.llm import augment_query, rerank_results
+from lib.llm import (
+    augment_query, 
+    batch_rerank_results, 
+    individual_rerank_results
+    )
 
 class HybridSearch:
     def __init__(self, documents):
@@ -150,8 +154,10 @@ def rrf_search(query, k, limit=5,enhances=None,rerank=None):
 
     results = hybrid.rrf_search(query,k,limit)
 
-    if rerank:
-        results = rerank_results(results,query,rerank)
+    if rerank == 'individual':
+        results = individual_rerank_results(results,query,rerank)
+    elif rerank == 'batch':
+        results = batch_rerank_results(results,query)
 
     return results[:int(limit/5)]
 

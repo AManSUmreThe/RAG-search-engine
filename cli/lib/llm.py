@@ -1,5 +1,6 @@
 import os
 import time
+import json
 from collections import defaultdict
 
 from dotenv import load_dotenv
@@ -52,8 +53,8 @@ def augment_query(query,type):
     # print(prompt)
     return generate_response(prompt)
 
-def rerank_results(documents,query,type):
-    with open(PROMPTS_PATH/f'{type}.md','r') as f:
+def individual_rerank_results(documents,query,type):
+    with open(PROMPTS_PATH/'individual.md','r') as f:
         prompt = f.read()
     results = []
     for doc in documents:
@@ -73,4 +74,47 @@ def rerank_results(documents,query,type):
         print(rank,doc['title'])
         time.sleep(15)
     return sorted(results,key = lambda x:x['rerank'], reverse=True)
-        
+
+def batch_rerank_results(documents, query):
+    doc_string = '''<movie>\n<ID>{id}</ID><title>{title}</title>\n<description>{document}</description>\n</movie>'''
+    doc_str_list = ''
+    for doc in documents:
+        doc_str_list += doc_string.format(
+            id = doc['id'],
+            title = doc['title'],
+            document = doc['document']
+        )
+    
+    with open(PROMPTS_PATH/'batch.md', 'r') as f:
+         prompt = f.read()
+    prompt=prompt.format(
+        query=query,
+        doc_list_str = doc_str_list
+    )
+    response = generate_response(prompt)
+    # print(response)
+    try:
+        response_parse = json.loads(response)
+        # print(response_parse)
+    except:
+        # print(response_parse)
+        print('failed to load response in Json.\n LLM returned invalid json format')
+        return []
+    
+    results = []
+    docmap = {doc['id']:doc for doc in documents}
+
+    for idx,doc_id in enumerate(response_parse, start=1):
+        doc = docmap[doc_id]
+        results.append({**doc,'rerank':idx})
+    
+    return results
+    # for idx,doc in enumerate(documents):
+    #     try:
+    #         rank = int(response_parse[idx])
+    #     except:
+    #         rank = float('inf')
+    #         print(f'failed to load rank of {doc['title']}.\n invalid rank {response_parse[idx]}(not a number)')
+    #     results.append({**doc,'rerank':rank})
+
+    # return sorted(results, key= lambda x:x['rerank'])

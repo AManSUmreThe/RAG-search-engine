@@ -30,7 +30,7 @@ def main() -> None:
                             )
     rrf_search_parser.add_argument("--rerank-method",
                                    type=str,
-                                   choices=["individual"],
+                                   choices=["individual","batch"],
                                    help="Re ranking results with llm"
                                    )
 
@@ -39,10 +39,17 @@ def main() -> None:
 
     match args.command:
         case 'rrf_search':
+            if args.rerank_method:
+                print(f'Re ranking top {args.limit} results using {args.rerank_method} method')
+
             results = rrf_search(args.query,args.k,args.limit,args.enhance,args.rerank_method)
+            
             for idx,res in enumerate(results,start=1):
                 print(f"{idx}. {res['title']}")
-                print(f"RRF Score: {res['rrf_score']:.3f}")
+                if res['rerank']: 
+                    print(f'Re-rank Rank: {res['rerank']}')
+                else:
+                    print(f"RRF Score: {res['rrf_score']:.3f}")
                 print(f"BM25 Rank: {res['bm25_rank']}, Semantic Rank: {res['semantic_rank']}")
                 print(res['document'][:100])
         case 'weighted_search':
