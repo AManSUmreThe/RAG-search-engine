@@ -6,7 +6,8 @@ from lib.semantic_search import ChunkedSemanticSearch
 from lib.search_utils import load_movies_data
 from lib.llm import (
     augment_query, 
-    batch_rerank_results, 
+    batch_rerank_results,
+    cross_encoding_results, 
     individual_rerank_results
     )
 
@@ -158,6 +159,8 @@ def rrf_search(query, k, limit=5,enhances=None,rerank=None):
         results = individual_rerank_results(results,query,rerank)
     elif rerank == 'batch':
         results = batch_rerank_results(results,query)
+    elif rerank == 'cross_encoder':
+        results = cross_encoding_results(results,query)
 
     return results[:int(limit/5)]
 

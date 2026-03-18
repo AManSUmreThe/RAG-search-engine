@@ -4,10 +4,10 @@ import json
 from collections import defaultdict
 
 from dotenv import load_dotenv
-
+from sentence_transformers import CrossEncoder
 from google import genai
 
-from lib.search_utils import PROMPTS_PATH
+from lib.search_utils import HF_TOKEN, PROMPTS_PATH
 
 def generate_response(content,model_name="gemma-3-27b-it"):
     load_dotenv()
@@ -118,3 +118,19 @@ def batch_rerank_results(documents, query):
     #     results.append({**doc,'rerank':rank})
 
     # return sorted(results, key= lambda x:x['rerank'])
+
+def cross_encoding_results(documents,query):
+    cross_encoder = CrossEncoder("cross-encoder/ms-marco-TinyBERT-L2-v2",token=HF_TOKEN)
+    pairs = get_pairs(documents,query)
+    scores = cross_encoder.predict(pairs)
+    # print(scores)
+    results = []
+    for idx,doc in enumerate(documents):
+        results.append({**doc,'rerank':scores[idx]})
+    return sorted(results,key = lambda x:x['rerank'], reverse=True)
+
+def get_pairs(documents,query):
+    pairs = []
+    for doc in documents:
+        pairs.append([query,f'{doc['title']}-{doc['document']}'])
+    return pairs

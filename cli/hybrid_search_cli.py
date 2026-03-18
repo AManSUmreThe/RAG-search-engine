@@ -30,7 +30,7 @@ def main() -> None:
                             )
     rrf_search_parser.add_argument("--rerank-method",
                                    type=str,
-                                   choices=["individual","batch"],
+                                   choices=["individual","batch","cross_encoder"],
                                    help="Re ranking results with llm"
                                    )
 
@@ -47,7 +47,7 @@ def main() -> None:
             for idx,res in enumerate(results,start=1):
                 print(f"{idx}. {res['title']}")
                 if res['rerank']: 
-                    print(f'Re-rank Rank: {res['rerank']}')
+                    print(f'Re-rank Rank: {res['rerank']:.4f}')
                 else:
                     print(f"RRF Score: {res['rrf_score']:.3f}")
                 print(f"BM25 Rank: {res['bm25_rank']}, Semantic Rank: {res['semantic_rank']}")
