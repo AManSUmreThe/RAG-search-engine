@@ -6,6 +6,7 @@ from pathlib import Path
 load_dotenv()
 
 ROOT = Path(__file__).resolve().parents[2]
+EVAL_PATH = ROOT/'data'/'golden_dataset.json'
 DATA_PATH = ROOT/'data'/'movies.json'
 STOPWORD_PATH = ROOT/'data'/'stopwords.txt'
 CACHE_PATH = ROOT/'cache'

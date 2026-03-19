@@ -56,9 +56,9 @@ def main() -> None:
             results = weighted_search(args.query,args.alpha,args.limit)
             for idx,res in enumerate(results,start=1):
                 print(f"{idx}. {res['title']}")
-                print(f"Hybrid Score: {res['hybrid_score']:.3f}")
+                print(f"Hybrid Score: {res['hybrid_score']:.4f}")
                 print(f"BM25: {res['bm25_score']:.3f}, Semantic: {res['semantic_score']:.3f}")
-                print(res['document'])
+                print(res['document'][:100])
         case 'normalize':
             scores = normalize(list(args.score_list))
             for score in scores:
