@@ -1,6 +1,7 @@
 import argparse
 
 import json
+import time
 from lib.search_utils import EVAL_PATH
 from lib.hybrid_search import rrf_search
 
@@ -24,7 +25,7 @@ def main():
     for test in test_data:
         query = test['query']
         relevant_docs = test["relevant_docs"]
-        results = rrf_search(query,60,limit,rerank='cross_encoder')
+        results = rrf_search(query,60,limit,rerank='individual',enhances='rewrite')
 
         total_retrieved = len(results)
         relevant_retrieved = 0
@@ -43,6 +44,8 @@ Relevant docs in golden dataset: {len(relevant_docs)}
 Result Precision percentage: {precision*100}
 ''')
         print("_"*30)
+
+        time.sleep(60)
 
 if __name__ == "__main__":
     main()

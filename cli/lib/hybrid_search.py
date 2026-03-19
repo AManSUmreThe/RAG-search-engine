@@ -26,7 +26,7 @@ class HybridSearch:
         self.idx.load()
         return self.idx.bm25_search(query, limit)
 
-    def weighted_search(self, query, alpha, limit=5):
+    def weighted_search(self, query, alpha=0.5, limit=5):
         # raise NotImplementedError("Weighted hybrid search is not implemented yet.")
         bm25_results = self._bm25_search(query,limit*500)
         semantic_results = self.semantic_search.search_chunks(query,limit*500)
@@ -150,10 +150,11 @@ def rrf_search(query, k, limit=5,enhances=None,rerank=None):
         enhanced_query = augment_query(query,enhances)
         print(f"Enhanced query ({enhances}): '{query}' -> '{enhanced_query}'\n")
         query = enhanced_query
-    if rerank:
+    if rerank and rerank != 'individual':
         limit = 5*limit
 
     results = hybrid.rrf_search(query,k,limit)
+    # results = hybrid.weighted_search(query,limit=limit)
 
     if rerank == 'individual':
         results = individual_rerank_results(results,query,rerank)
@@ -162,7 +163,7 @@ def rrf_search(query, k, limit=5,enhances=None,rerank=None):
     elif rerank == 'cross_encoder':
         results = cross_encoding_results(results,query)
 
-    return results[:int(limit/5)]
+    return results[:limit]
 
 def normalize(scores):
     if not scores or len(scores) == 0 :
