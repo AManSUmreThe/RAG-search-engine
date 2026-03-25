@@ -108,8 +108,13 @@ class HybridSearch:
             }
         
         for rank,res in enumerate(semantic_results,start=1):
-            doc = results[res["id"]]
-            if doc:
+            # if results[res["id"]]:
+            #     doc = results[res["id"]]
+            # else:
+            #     results[res["id"]] = None
+            #     doc = results[res["id"]]
+            doc = results.get(res['id'])
+            if doc != None:
                 doc['semantic_rank'] = rank
             else:
                 doc = {

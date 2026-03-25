@@ -9,6 +9,7 @@ from google import genai
 
 from lib.search_utils import HF_TOKEN, PROMPTS_PATH
 
+# LLM Response Generation
 def generate_response(content,model_name="gemma-3-27b-it"):
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -16,36 +17,9 @@ def generate_response(content,model_name="gemma-3-27b-it"):
         raise RuntimeError("GEMINI_API_KEY environment variable not set")
     client = genai.Client(api_key=api_key)
     response = client.models.generate_content(model= model_name,contents= content)
-    # print(response.text)
-    # print(response.usage_metadata.prompt_token_count)
-    # ### known bug returns None 
-    # print(response.usage_metadata.candidates_tokens_details)
-    # ### ignore if works correctly
     return response.text
 
-# def correct_spelling(query):
-    
-#     with open(PROMPTS_PATH/'spellings.md','r') as f:
-#         prompt = f.read()
-#     prompt = prompt.format(query=query)
-#     # print(prompt)
-#     return generate_response(prompt)
-    
-# def rewrite_query(query):
-
-#     with open(PROMPTS_PATH/'rewrite.md','r') as f:
-#         prompt = f.read()
-#     prompt = prompt.format(query=query)
-#     # print(prompt)
-#     return generate_response(prompt)
-
-# def expand_query(query):
-#     with open(PROMPTS_PATH/'expansion.md','r') as f:
-#         prompt = f.read()
-#     prompt = prompt.format(query=query)
-#     # print(prompt)
-#     return generate_response(prompt)
-
+# Query augmentation
 def augment_query(query,type):
     with open(PROMPTS_PATH/f'{type}.md','r') as f:
         prompt = f.read()
@@ -53,6 +27,7 @@ def augment_query(query,type):
     # print(prompt)
     return generate_response(prompt)
 
+# LLM Reranking methods
 def individual_rerank_results(documents,query,type):
     with open(PROMPTS_PATH/'individual.md','r') as f:
         prompt = f.read()
@@ -134,3 +109,4 @@ def get_pairs(documents,query):
     for doc in documents:
         pairs.append([query,f'{doc['title']}-{doc['document']}'])
     return pairs
+
