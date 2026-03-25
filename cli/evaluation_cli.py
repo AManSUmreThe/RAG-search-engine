@@ -25,7 +25,9 @@ def main():
     for test in test_data:
         query = test['query']
         relevant_docs = test["relevant_docs"]
-        results = rrf_search(query,60,limit,rerank='individual',enhances='rewrite')
+        results = rrf_search(query,60,limit,rerank='cross_encoder')
+        results = results[:limit]
+        top_K = len(results)
 
         total_retrieved = len(results)
         relevant_retrieved = 0
@@ -34,18 +36,21 @@ def main():
                 relevant_retrieved += 1
 
         precision = relevant_retrieved / total_retrieved
-
+        recall = relevant_retrieved / len(relevant_docs)
+        f1 = 2 * (precision * recall) / (precision + recall)
         print(f"Query: {query}, limit:{limit}")
         print(f'''
 Total retrieved docs: {total_retrieved}
 Relevant docs: {relevant_retrieved}
 Relevant docs in golden dataset: {len(relevant_docs)} 
 
-Result Precision percentage: {precision*100}
+Result Precision@{top_K}: {precision:.4f}
+Recall@{top_K}: {recall:.4f}
+F1-score@{top_K}: {f1:.4f}
 ''')
-        print("_"*30)
+        print("_"*60)
 
-        time.sleep(60)
+        # time.sleep(30)
 
 if __name__ == "__main__":
     main()

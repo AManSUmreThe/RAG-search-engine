@@ -163,7 +163,8 @@ def rrf_search(query, k, limit=5,enhances=None,rerank=None):
     elif rerank == 'cross_encoder':
         results = cross_encoding_results(results,query)
 
-    return results[:limit]
+    # return results[:limit]
+    return results
 
 def normalize(scores):
     if not scores or len(scores) == 0 :
