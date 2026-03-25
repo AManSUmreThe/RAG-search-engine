@@ -44,7 +44,7 @@ def main() -> None:
 
             results = rrf_search(args.query,args.k,args.limit,args.enhance,args.rerank_method)
             
-            for idx,res in enumerate(results,start=1):
+            for idx,res in enumerate(results[:args.limit],start=1):
                 print(f"{idx}. {res['title']}")
                 if res['rerank']: 
                     print(f'Re-rank Rank: {res['rerank']:.4f}')
