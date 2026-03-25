@@ -21,25 +21,25 @@ flowchart TD
 
   Mode -->|keyword| KW[BM25 keyword search]
   Mode -->|semantic| SM[Semantic chunk search]
-  Mode -->|hybrid| HY[Hybrid retrieval (weighted or RRF)]
+  Mode -->|hybrid| HY["Hybrid retrieval (weighted or RRF)"]
 
-  HY --> RANK[Rank aggregation / scoring]
+  HY --> RANK["Rank aggregation / scoring"]
   KW --> RANK
   SM --> RANK
 
   RANK --> ENH{Optional query enhancement}
-  ENH -->|yes| LLM_ENH[Gemini: generate_response() on prompts/{type}.md]
+  ENH -->|yes| LLM_ENH["Gemini: generate_response() on prompts/{type}.md"]
   ENH -->|no| RERANK
 
   RERANK --> RR{Optional re-ranking}
-  RR -->|individual/batch| LLM_RERANK[Gemini: rerank via prompts/individual.md or prompts/batch.md]
-  RR -->|cross_encoder| CE_RERANK[CrossEncoder: cross-encoder/ms-marco-TinyBERT-L2-v2]
+  RR -->|individual/batch| LLM_RERANK["Gemini: rerank via prompts/individual.md or prompts/batch.md"]
+  RR -->|cross_encoder| CE_RERANK["CrossEncoder: cross-encoder/ms-marco-TinyBERT-L2-v2"]
   RR -->|none| TOP[Top-k results]
 
   LLM_ENH --> TOP
   CE_RERANK --> TOP
   LLM_RERANK --> TOP
-  TOP --> OUT[Printed results / evaluation metrics]
+  TOP --> OUT["Printed results / evaluation metrics"]
 ```
 
 ## Quickstart
