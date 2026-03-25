@@ -41,7 +41,7 @@ def main():
             for idx,res in enumerate(results,start=1):
                 print(f'{idx}. {res['title']}')
             
-            print('RAG Response')
+            print('LLM Summary:')
             response = summarize(query,results)
             print(response)
         case _:

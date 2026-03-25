@@ -1,7 +1,5 @@
-
-
-from cli.lib.llm import generate_response
-from cli.lib.search_utils import PROMPTS_PATH
+from lib.llm import generate_response
+from lib.search_utils import PROMPTS_PATH
 
 
 def format_results(results):
@@ -39,3 +37,5 @@ def summarize(query,results):
         query = query,
         results = formatted_results
     )
+
+    return generate_response(prompt)
