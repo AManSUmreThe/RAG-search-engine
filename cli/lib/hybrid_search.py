@@ -65,7 +65,7 @@ class HybridSearch:
             }
         
         for norm in semantic_norm_res:
-            doc = combined_res[norm["id"]]
+            doc = combined_res.get(norm["id"])
             if doc:
                 doc['semantic_score'] = norm['norm_score']
             else:
@@ -137,11 +137,24 @@ class HybridSearch:
 
         return sorted_results
 
-def weighted_search(query, alpha, limit=5):
+def weighted_search(query, alpha, limit=5, enhances=None, rerank=None):
     documents = load_movies_data()
     hybrid = HybridSearch(documents)
 
+    if enhances != None:
+        enhanced_query = augment_query(query,enhances)
+        print('this')
+        print(f"Enhanced query ({enhances}): '{query}' -> '{enhanced_query}'\n")
+        query = enhanced_query
+
     results = hybrid.weighted_search(query,alpha,limit)
+
+    if rerank == 'individual':
+        results = individual_rerank_results(results,query,rerank)
+    elif rerank == 'batch':
+        results = batch_rerank_results(results,query)
+    elif rerank == 'cross_encoder':
+        results = cross_encoding_results(results,query)
 
     return results
 
@@ -150,11 +163,14 @@ def rrf_search(query, k, limit=5,enhances=None,rerank=None):
 
     documents = load_movies_data()
     hybrid = HybridSearch(documents)
-
-    if enhances:
+    # print('this')
+    
+    if enhances != None:
         enhanced_query = augment_query(query,enhances)
+        print('this')
         print(f"Enhanced query ({enhances}): '{query}' -> '{enhanced_query}'\n")
         query = enhanced_query
+    
     if rerank and rerank != 'individual':
         limit = 5*limit
 

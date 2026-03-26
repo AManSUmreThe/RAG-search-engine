@@ -38,7 +38,7 @@ def main():
         case 'summarize':
             query = args.query
             # do RAG stuff here
-            results = rrf_search(query,k=60,limit=args.limit,enhances=None,rerank=None)
+            results = rrf_search(query,k=60,limit=args.limit,enhances='rewrite',rerank=None)
 
             print('Search Results: ')
             for res in results:
@@ -50,7 +50,8 @@ def main():
         case 'citation':
             query = args.query
             # do RAG stuff here
-            results = rrf_search(query,k=60,limit=args.limit,enhances=None,rerank=None)
+            # results = rrf_search(query,k=100,limit=args.limit,enhances='rewrite',rerank=None)
+            results = weighted_search(query,alpha=0.4,limit=args.limit,enhances='rewrite',rerank=None)
 
             print('Search Results: ')
             for res in results:
